@@ -1,0 +1,11 @@
+{
+  "name": "googlesheetstocommercetools",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "ISC",
+  "dependencies": {
+    "googleapis": "^39.2.0",
+    "node-fetch": "^2.6.0",
+    "yargs": "^14.0.0"
+  }
+}
