@@ -1,7 +1,7 @@
-const waitForInput = require("./wait-for-input");
+const fs = require("fs");
 const gs = require("./googlesheets");
 const ct = require("./commercetools");
-const log = console.log;
+const { waitForInput, log, greenLog, redLog } = require("./cli-helpers");
 
 const { spreadsheetId, range, ...argv } = require("yargs")
   .usage("Import customers from a Google Sheet into CommerceTools")
@@ -51,20 +51,43 @@ const { spreadsheetId, range, ...argv } = require("yargs")
   }).argv;
 
 const main = async () => {
-  log("Authorizing with google");
   const auth = await gs.authorize();
 
   log("Retrieving values from spread sheet");
-  const values = await gs.retrieveDataFromSheet(auth, spreadsheetId, range);
-  log("Total amount of customers to export:", values.length - 1);
+  const values = await gs
+    .retrieveDataFromSheet(auth, spreadsheetId, range)
+    .slice(0, 1);
 
-  await waitForInput("Continue?");
+  greenLog("Total customers exported from spread sheet:", values.length - 1);
+
+  await waitForInput("Proceed?");
 
   const commercetoolsToken = await ct.authenticate(argv);
-  for (const customer of values.slice(0, 1)) {
-    await ct.saveCustomer(argv, commercetoolsToken, customer);
-    console.log("Saved customer: ", customer.email);
+  const unsuccessfulSaves = [];
+
+  for (const customer of values) {
+    try {
+      await ct.saveCustomer(argv, commercetoolsToken, customer);
+      greenLog("Saved customer: ", customer.email);
+    } catch (e) {
+      unsuccessfulSaves.push({ ...customer, reason: e.message });
+      redLog(
+        "Failed to save customer: ",
+        e.message.substr(0, e.message.indexOf("\n"))
+      );
+    }
   }
+
+  if (unsuccessfulSaves.length > 0) {
+    redLog("Customers failed to save:", unsuccessfulSaves.length);
+    log("Saved errors to file: ./errors.json");
+    fs.writeFileSync("errors.json", JSON.stringify(unsuccessfulSaves, null, 2));
+  }
+
+  greenLog(
+    "Finished, total customers imported: ",
+    values.length - unsuccessfulSaves.length - 1
+  );
 };
 
-main().catch(err => console.error(err));
+main().catch(err => redLog(err));
