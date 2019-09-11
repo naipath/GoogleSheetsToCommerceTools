@@ -73,7 +73,7 @@ const main = async () => {
       await ct.saveRegisteredDevice(customer, customerId);
       await ct.saveCommunicationChannels(customer, customerId);
 
-      greenLog("Saved customer: ", customer.email);
+      greenLog("Saved customer: ", customerId);
     } catch (e) {
       unsuccessfulSaves.push({ ...customer, reason: e.message });
       redLog(
