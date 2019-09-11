@@ -57,15 +57,14 @@ const retrieveDataFromSheet = (auth, spreadsheetId, range) =>
         return redLog(`The API returned an error: ${err}`);
       }
       const rows = res.data.values;
-      const parsedRows = rows.slice(1).map(row =>
-        rows[0].reduce(
-          (acc, cur, index) => ({
-            ...acc,
-            [cur]: row[index]
-          }),
-          {}
-        )
-      );
+      const parsedRows = rows
+        .slice(1)
+        .map(row =>
+          rows[0].reduce(
+            (acc, cur, index) => ({ ...acc, [cur]: row[index] }),
+            {}
+          )
+        );
       resolve(parsedRows);
     });
   });
