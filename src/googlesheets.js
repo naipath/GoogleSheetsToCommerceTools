@@ -1,5 +1,6 @@
 const fs = require("fs");
 const readline = require("readline");
+const { redLog } = require("./cli-helpers");
 const { google } = require("googleapis");
 
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
@@ -19,10 +20,7 @@ const getNewToken = (oAuth2Client, callback) => {
     rl.close();
     oAuth2Client.getToken(code, (err, token) => {
       if (err)
-        return console.error(
-          "Error while trying to retrieve access token",
-          err
-        );
+        return redLog("Error while trying to retrieve access token", err);
       oAuth2Client.setCredentials(token);
       fs.writeFile(TOKEN_PATH, JSON.stringify(token), err => {
         if (err) return console.error(err);
@@ -56,7 +54,7 @@ const retrieveDataFromSheet = (auth, spreadsheetId, range) =>
     sheets.spreadsheets.values.get({ spreadsheetId, range }, (err, res) => {
       if (err) {
         reject(err);
-        return console.log("The API returned an error: " + err);
+        return redLog(`The API returned an error: ${err}`);
       }
       const rows = res.data.values;
       const parsedRows = rows.slice(1).map(row =>
@@ -73,6 +71,6 @@ const retrieveDataFromSheet = (auth, spreadsheetId, range) =>
   });
 
 module.exports = {
-  retrieveDataFromSheet,
-  authorize
+  authorize,
+  retrieveDataFromSheet
 };
