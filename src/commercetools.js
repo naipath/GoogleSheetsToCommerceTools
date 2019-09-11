@@ -1,5 +1,5 @@
-const fetch = require("node-fetch");
 const { URLSearchParams } = require("url");
+const fetch = require("node-fetch");
 const uuidv4 = require("uuid/v4");
 
 const handle = errorMessage => async res => {
@@ -80,17 +80,19 @@ const saveCustomObject = ({ apiUrl, projectKey }, token, customObject) =>
     )
   );
 
-const saveCommunicationChannels = (config, token, customer, customerId) =>
-  saveCustomObject(config, token, {
+const saveCommunicationChannels = (config, token, customer, customerId) => {
+  const agreed = customer.agreeNewsletter === "True";
+  return saveCustomObject(config, token, {
     container: "communicationChannels",
     key: customerId,
     value: {
-      directMail: customer.agreeNewsletter === "True",
-      textMessage: customer.agreeNewsletter === "True",
-      phone: customer.agreeNewsletter === "True",
-      email: customer.agreeNewsletter === "True"
+      directMail: agreed,
+      textMessage: agreed,
+      phone: agreed,
+      email: agreed
     }
   });
+};
 
 const saveRegisteredDevice = (config, token, customer, customerId) =>
   saveCustomObject(config, token, {
