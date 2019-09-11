@@ -56,13 +56,7 @@ const saveCustomer = async ({ apiUrl, projectKey }, token, customer) =>
 
 module.exports = {
   authenticate,
-  saveCustomer,
-  saveCustomers: async (config, token, customers) => {
-    for (const customer of customers) {
-      await saveCustomer(config, token, customer);
-      console.log("Saved customer: ", customer.email);
-    }
-  }
+  saveCustomer
 };
 
 // TODO: Map these fields

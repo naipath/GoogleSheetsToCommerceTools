@@ -1,6 +1,7 @@
-const fs = require("fs");
+const waitForInput = require("./wait-for-input");
 const gs = require("./googlesheets");
 const ct = require("./commercetools");
+const log = console.log;
 
 const { spreadsheetId, range, ...argv } = require("yargs")
   .usage("Import customers from a Google Sheet into CommerceTools")
@@ -50,11 +51,20 @@ const { spreadsheetId, range, ...argv } = require("yargs")
   }).argv;
 
 const main = async () => {
+  log("Authorizing with google");
   const auth = await gs.authorize();
+
+  log("Retrieving values from spread sheet");
   const values = await gs.retrieveDataFromSheet(auth, spreadsheetId, range);
+  log("Total amount of customers to export:", values.length - 1);
+
+  await waitForInput("Continue?");
 
   const commercetoolsToken = await ct.authenticate(argv);
-  await ct.saveCustomers(argv, commercetoolsToken, values.slice(0, 1));
+  for (const customer of values.slice(0, 1)) {
+    await ct.saveCustomer(argv, commercetoolsToken, customer);
+    console.log("Saved customer: ", customer.email);
+  }
 };
 
 main().catch(err => console.error(err));
