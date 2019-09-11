@@ -33,8 +33,9 @@ const getNewToken = (oAuth2Client, callback) => {
   });
 };
 
-const authorize = async credentials =>
+const authorize = async () =>
   new Promise(resolve => {
+    const credentials = JSON.parse(fs.readFileSync("credentials.json"));
     const { client_secret, client_id, redirect_uris } = credentials.installed;
     const oAuth2Client = new google.auth.OAuth2(
       client_id,

@@ -1,7 +1,7 @@
 {
   "name": "googlesheetstocommercetools",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "main.js",
   "license": "ISC",
   "dependencies": {
     "googleapis": "^39.2.0",
