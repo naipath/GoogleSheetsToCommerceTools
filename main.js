@@ -1,7 +1,7 @@
 const fs = require("fs");
-const gs = require("./googlesheets");
-const ct = require("./commercetools");
-const { waitForInput, log, greenLog, redLog } = require("./cli-helpers");
+const gs = require("./src/googlesheets");
+const ct = require("./src/commercetools");
+const { waitForInput, log, greenLog, redLog } = require("./src/cli-helpers");
 
 const { spreadsheetId, range, ...argv } = require("yargs")
   .usage("Import customers from a Google Sheet into CommerceTools")
@@ -61,24 +61,17 @@ const main = async () => {
 
   await waitForInput("Proceed?");
 
-  const commercetoolsToken = await ct.authenticate(argv);
+  const token = await ct.authenticate(argv);
   const unsuccessfulSaves = [];
 
   for (const customer of values) {
     try {
-      const result = await ct.saveCustomer(argv, commercetoolsToken, customer);
-      ct.saveRegisteredDevice(
-        argv,
-        commercetoolsToken,
-        customer,
-        result.customer.id
-      );
-      ct.saveCommunicationChannels(
-        argv,
-        commercetoolsToken,
-        customer,
-        result.customer.id
-      );
+      const result = await ct.saveCustomer(argv, token, customer);
+      const customerId = result.customer.id;
+
+      await ct.saveRegisteredDevice(argv, token, customer, customerId);
+      await ct.saveCommunicationChannels(argv, token, customerId);
+
       greenLog("Saved customer: ", customer.email);
     } catch (e) {
       unsuccessfulSaves.push({ ...customer, reason: e.message });
