@@ -1,5 +1,6 @@
 const fetch = require("node-fetch");
 const { URLSearchParams } = require("url");
+const uuidv4 = require("uuid/v4");
 
 const handle = errorMessage => async res => {
   const message = await res.json();
@@ -65,12 +66,46 @@ const saveCustomer = async ({ apiUrl, projectKey }, token, customer) =>
     })
   }).then(handle("Saving the customer failed"));
 
+const saveCustomObject = ({ apiUrl, projectKey }, token, customObject) =>
+  fetch(`${apiUrl}/${projectKey}/custom-objects`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(customObject)
+  }).then(
+    handle(
+      `Saving the custom object failed, container: ${customObject.container}`
+    )
+  );
+
+const saveCommunicationChannels = (config, token, customer, customerId) =>
+  saveCustomObject(config, token, {
+    container: "communicationChannels",
+    key: customerId,
+    value: {
+      directMail: customer.agreeNewsletter === "True",
+      textMessage: customer.agreeNewsletter === "True",
+      phone: customer.agreeNewsletter === "True",
+      email: customer.agreeNewsletter === "True"
+    }
+  });
+
+const saveRegisteredDevice = (config, token, customer, customerId) =>
+  saveCustomObject(config, token, {
+    container: "RegisteredDevice",
+    key: uuidv4(),
+    value: {
+      customerId: customerId,
+      batchCode: customer.deviceBatchCode,
+      type: customer.deviceType === "myblu" ? "MyBlu" : customer.deviceType
+    }
+  });
+
 module.exports = {
   authenticate,
-  saveCustomer
+  saveCustomer,
+  saveCommunicationChannels,
+  saveRegisteredDevice
 };
-
-// TODO: Map these fields
-//     deviceType: 'myblu',
-//     deviceBatchCode: 'B1234',
-//     agreeNewsletter: 'True',

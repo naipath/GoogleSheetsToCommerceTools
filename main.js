@@ -55,7 +55,7 @@ const main = async () => {
 
   log("Retrieving values from spread sheet");
   const data = await gs.retrieveDataFromSheet(auth, spreadsheetId, range);
-  const values = data.slice(0, 2);
+  const values = data.slice(0, 3);
 
   greenLog("Total customers exported from spread sheet:", values.length);
 
@@ -66,7 +66,19 @@ const main = async () => {
 
   for (const customer of values) {
     try {
-      await ct.saveCustomer(argv, commercetoolsToken, customer);
+      const result = await ct.saveCustomer(argv, commercetoolsToken, customer);
+      ct.saveRegisteredDevice(
+        argv,
+        commercetoolsToken,
+        customer,
+        result.customer.id
+      );
+      ct.saveCommunicationChannels(
+        argv,
+        commercetoolsToken,
+        customer,
+        result.customer.id
+      );
       greenLog("Saved customer: ", customer.email);
     } catch (e) {
       unsuccessfulSaves.push({ ...customer, reason: e.message });

@@ -6,6 +6,7 @@
   "dependencies": {
     "googleapis": "^39.2.0",
     "node-fetch": "^2.6.0",
+    "uuid": "^3.3.3",
     "yargs": "^14.0.0"
   }
 }
