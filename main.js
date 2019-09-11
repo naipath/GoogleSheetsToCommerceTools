@@ -54,11 +54,10 @@ const main = async () => {
   const auth = await gs.authorize();
 
   log("Retrieving values from spread sheet");
-  const values = await gs
-    .retrieveDataFromSheet(auth, spreadsheetId, range)
-    .slice(0, 1);
+  const data = await gs.retrieveDataFromSheet(auth, spreadsheetId, range);
+  const values = data.slice(0, 2);
 
-  greenLog("Total customers exported from spread sheet:", values.length - 1);
+  greenLog("Total customers exported from spread sheet:", values.length);
 
   await waitForInput("Proceed?");
 
@@ -86,7 +85,7 @@ const main = async () => {
 
   greenLog(
     "Finished, total customers imported: ",
-    values.length - unsuccessfulSaves.length - 1
+    values.length - unsuccessfulSaves.length
   );
 };
 

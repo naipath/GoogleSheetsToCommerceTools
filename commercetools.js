@@ -42,6 +42,7 @@ const saveCustomer = async ({ apiUrl, projectKey }, token, customer) =>
     },
     body: JSON.stringify({
       email: customer.email,
+      password: "Password1!" + new Date().getTime(),
       firstName: customer.firstName,
       middleName: customer.middleName,
       lastName: customer.lastName,
@@ -49,8 +50,18 @@ const saveCustomer = async ({ apiUrl, projectKey }, token, customer) =>
       salutation: customer.title,
       locale: customer.language,
       dateOfBirth: customer.dateOfBirth,
-
-      password: "AdefaultValue01!"
+      address: [
+        {
+          country: customer.country,
+          phone: customer.phoneNumber,
+          mobile: customer.mobilePhoneNumber,
+          city: customer.city,
+          postalCode: customer.postalCode,
+          streetName: customer.streetName,
+          streetNumber: customer.streetNumber,
+          email: customer.email
+        }
+      ]
     })
   }).then(handle("Saving the customer failed"));
 
@@ -63,11 +74,3 @@ module.exports = {
 //     deviceType: 'myblu',
 //     deviceBatchCode: 'B1234',
 //     agreeNewsletter: 'True',
-//     phoneNumber: '',
-//     mobilePhoneNumber: '+3112345421234',
-//     streetName: 'sdf',
-//     houseNumber: 'sdf',
-//     postalCode: 'sdfsdfsf',
-//     city: 'fds',
-//     registrationDateTime: '2019-09-04T12:15:14.7198010Z',
-//     __PowerAppsId__: 'f82101dad6d74632a8d977d86f973439' }
