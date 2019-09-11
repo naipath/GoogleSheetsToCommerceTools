@@ -1,7 +1,7 @@
 const fs = require("fs");
 const readline = require("readline");
-const { redLog } = require("./cli-helpers");
 const { google } = require("googleapis");
+const { log, redLog } = require("./cli-helpers");
 
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
 const TOKEN_PATH = "token.json";
@@ -11,7 +11,7 @@ const getNewToken = (oAuth2Client, callback) => {
     access_type: "offline",
     scope: SCOPES
   });
-  console.log("Authorize this app by visiting this url:", authUrl);
+  log("Authorize this app by visiting this url:", authUrl);
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -23,8 +23,8 @@ const getNewToken = (oAuth2Client, callback) => {
         return redLog("Error while trying to retrieve access token", err);
       oAuth2Client.setCredentials(token);
       fs.writeFile(TOKEN_PATH, JSON.stringify(token), err => {
-        if (err) return console.error(err);
-        console.log("Token stored to", TOKEN_PATH);
+        if (err) return redLog(err);
+        log("Token stored to", TOKEN_PATH);
       });
       callback(oAuth2Client);
     });
