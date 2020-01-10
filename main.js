@@ -95,4 +95,4 @@ const main = async () => {
   );
 };
 
-main().catch(err => redLog(err));
+main().catch(redLog);
