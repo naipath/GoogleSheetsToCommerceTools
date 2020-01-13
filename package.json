@@ -1,14 +1,23 @@
 {
   "name": "googlesheetstocommercetools",
   "description": "Syncronize a google sheet with customer data to commercetools",
-  "keywords": ["commercetools", "googlesheets"],
-  "author": { "email": "teije-vs@hotmail.com", "name": "tvs" },
+  "keywords": [
+    "commercetools",
+    "googlesheets"
+  ],
+  "author": {
+    "email": "teije-vs@hotmail.com",
+    "name": "tvs"
+  },
   "homepage": "https://github.com/naipath/GoogleSheetsToCommerceTools",
   "bugs": "https://github.com/naipath/GoogleSheetsToCommerceTools/issues",
   "version": "1.0.0",
   "main": "main.js",
   "license": "MIT",
-  "repository": {"type": "git", "url": "git://github.com/naipath/GoogleSheetsToCommerceTools.git"},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/naipath/GoogleSheetsToCommerceTools.git"
+  },
   "dependencies": {
     "googleapis": "^46.0.0",
     "node-fetch": "^2.6.0",

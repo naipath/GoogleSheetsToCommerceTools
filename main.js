@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const fs = require("fs");
 const gs = require("./src/googlesheets");
 const CommerceToolsClient = require("./src/commercetools");
